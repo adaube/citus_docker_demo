@@ -7,8 +7,9 @@ services:
     #ports: ["${MASTER_EXTERNAL_PORT:-5432}:5432"]
     labels: ['com.citusdata.role=Master']
     volumes:
+      - ./postgres-data:/var/lib/postgresql/data
       - type: bind
-        source: /media/adam/Data/Engagements
+        source: /media/$USER/Data/Engagements
         target: /var/lib/postgresql
     environment:
     - POSTGRES_DB=citus
