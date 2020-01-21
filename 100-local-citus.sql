@@ -1,5 +1,5 @@
 -- user:
-CREATE ROLE citus WITH NOSUPERUSER LOGIN IN ROLE pg_monitor;
+CREATE ROLE citus WITH superuser createrole createdb LOGIN IN ROLE pg_monitor;
 -- database:
 ALTER DATABASE citus OWNER TO citus;
 -- extensions:

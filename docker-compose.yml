@@ -4,10 +4,11 @@ services:
   master:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
     image: 'local-citus:latest'
-    #ports: ["${MASTER_EXTERNAL_PORT:-5432}:5432"]
     labels: ['com.citusdata.role=Master']
+    networks:
+      pg_net:
+        ipv4_address: 172.16.238.10
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
       - type: bind
         source: /media/$USER/Data/Engagements
         target: /var/lib/postgresql
@@ -17,13 +18,25 @@ services:
   worker:
     image: 'local-citus:latest'
     labels: ['com.citusdata.role=Worker']
+    networks:
+      pg_net:
     depends_on: { manager: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
   manager:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
     image: 'citusdata/membership-manager:0.2.0'
+    networks:
+      pg_net:
     volumes: ['/var/run/docker.sock:/var/run/docker.sock']
     depends_on: { master: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
+
+networks:
+  pg_net:
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.238.0/24
