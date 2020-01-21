@@ -1,0 +1,8 @@
+-- user:
+CREATE ROLE citus WITH NOSUPERUSER LOGIN IN ROLE pg_monitor;
+-- database:
+ALTER DATABASE citus OWNER TO citus;
+-- extensions:
+CREATE EXTENSION IF NOT EXISTS "citus";
+CREATE EXTENSION IF NOT EXISTS "hll";
+CREATE EXTENSION IF NOT EXISTS "topn";
