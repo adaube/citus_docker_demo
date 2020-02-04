@@ -10,10 +10,14 @@ services:
         ipv4_address: 172.16.238.10
     volumes:
       - type: bind
-        source: /media/$USER/Data/Engagements
+        source: /home/$USER/Desktop
         target: /var/lib/postgresql
     environment:
     - POSTGRES_DB=citus
+    build:
+      context: .
+      shm_size: 256mb
+    shm_size: 512mb
 
   worker:
     image: 'local-citus:latest'
@@ -23,6 +27,11 @@ services:
     depends_on: { manager: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
+    build:
+      context: .
+      shm_size: 256mb
+    shm_size: 1gb
+
   manager:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
     image: 'citusdata/membership-manager:0.2.0'
@@ -32,6 +41,10 @@ services:
     depends_on: { master: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
+    build:
+      context: .
+      shm_size: 256mb
+    shm_size: 512mb
 
 networks:
   pg_net:
