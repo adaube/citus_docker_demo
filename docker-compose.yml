@@ -8,17 +8,9 @@ services:
     networks:
       pg_net:
         ipv4_address: 172.16.238.10
-    volumes:
-      - type: bind
-        source: /home/$USER/Desktop
-        target: /var/lib/postgresql
     environment:
     - POSTGRES_DB=citus
-    build:
-      context: .
-      shm_size: 256mb
-    shm_size: 512mb
-
+  
   worker:
     image: 'local-citus:latest'
     labels: ['com.citusdata.role=Worker']
@@ -27,9 +19,6 @@ services:
     depends_on: { manager: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
-    build:
-      context: .
-      shm_size: 256mb
     shm_size: 1gb
 
   manager:
@@ -41,10 +30,6 @@ services:
     depends_on: { master: { condition: service_healthy } }
     environment:
     - POSTGRES_DB=citus
-    build:
-      context: .
-      shm_size: 256mb
-    shm_size: 512mb
 
 networks:
   pg_net:
