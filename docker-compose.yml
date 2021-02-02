@@ -1,40 +1,34 @@
-version: '2.4'
+version: '3'
 
 services:
   master:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
     image: 'local-citus:latest'
     labels: ['com.citusdata.role=Master']
-    networks:
-      pg_net:
-        ipv4_address: 172.16.238.10
-    environment:
-    - POSTGRES_DB=citus
+    environment: &AUTH
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PGUSER: "${POSTGRES_USER:-postgres}"
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
   
   worker:
     image: 'local-citus:latest'
     labels: ['com.citusdata.role=Worker']
-    networks:
-      pg_net:
-    depends_on: { manager: { condition: service_healthy } }
-    environment:
-    - POSTGRES_DB=citus
-    shm_size: 1gb
+    depends_on: [ manager ]
+    environment: *AUTH
+    command: "/wait-for-manager.sh"
+    volumes: 
+      - healthcheck-volume:/healthcheck
 
   manager:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
-    image: 'citusdata/membership-manager:0.2.0'
-    networks:
-      pg_net:
-    volumes: ['/var/run/docker.sock:/var/run/docker.sock']
-    depends_on: { master: { condition: service_healthy } }
-    environment:
-    - POSTGRES_DB=citus
+    image: 'citusdata/membership-manager:0.3.0'
+    volumes: 
+      - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
+      - healthcheck-volume:/healthcheck
+    depends_on: [ master ]
+    environment: *AUTH
 
-networks:
-  pg_net:
-    enable_ipv6: false
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.16.238.0/24
+volumes:
+  healthcheck-volume:
