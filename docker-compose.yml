@@ -3,7 +3,8 @@ version: '3'
 services:
   master:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_master"
-    image: 'local-citus:latest'
+    image: 'citusdata/citus:9.5.2'
+    ports: ["${COORDINATOR_EXTERNAL_PORT:-5432}:5432"]
     labels: ['com.citusdata.role=Master']
     environment: &AUTH
       POSTGRES_USER: "${POSTGRES_USER:-postgres}"
@@ -11,16 +12,14 @@ services:
       PGUSER: "${POSTGRES_USER:-postgres}"
       PGPASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
-  
   worker:
-    image: 'local-citus:latest'
+    image: 'citusdata/citus:9.5.2'
     labels: ['com.citusdata.role=Worker']
     depends_on: [ manager ]
     environment: *AUTH
     command: "/wait-for-manager.sh"
     volumes: 
       - healthcheck-volume:/healthcheck
-
   manager:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}_manager"
     image: 'citusdata/membership-manager:0.3.0'
@@ -29,6 +28,5 @@ services:
       - healthcheck-volume:/healthcheck
     depends_on: [ master ]
     environment: *AUTH
-
 volumes:
   healthcheck-volume:

@@ -39,4 +39,4 @@ RUN sed "/unset PGPASSWORD/d" -i /usr/local/bin/docker-entrypoint.sh
 
 HEALTHCHECK --interval=4s --start-period=6s CMD ./pg_healthcheck
 
-COPY 100-local-citus.sql /docker-entrypoint-initdb.d/
+#COPY 100-local-citus.sql /docker-entrypoint-initdb.d/
