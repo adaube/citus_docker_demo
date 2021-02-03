@@ -5,7 +5,7 @@ BEGIN;
 UPDATE pg_dist_node_metadata SET metadata=jsonb_insert(metadata, '{docker}', 'true');
 
 -- user:
-CREATE ROLE citus WITH NOSUPERUSER LOGIN IN ROLE pg_monitor;
+CREATE ROLE citus WITH superuser createrole createdb LOGIN IN ROLE pg_monitor;
 
 -- database:
 ALTER DATABASE citus SET citus.shard_replication_factor = 1;
