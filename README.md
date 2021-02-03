@@ -1,7 +1,7 @@
-# Why?
+# Why should I use this?
 - You want to recreate a database quickly.
 
-# Setup Instructions
+# Install dependencies
 1. docker
 
 ```
@@ -12,15 +12,10 @@ sudo apt install docker-ce docker-ce-cli containerd.io -y
 sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
-2. docker-compose
 
-```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
-3. Build docker image
+2. Build docker image
 `./build.sh`
-4. Start cluster
+4. Start
 `./start.sh`
-5. Stop cluster
+5. Stop
 `./stop.sh`
