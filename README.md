@@ -15,7 +15,7 @@ sudo usermod -aG docker $USER
 
 2. Build docker image
 `./build.sh`
-4. Start
+4. Start the cluster
 `./start.sh`
-5. Stop
+5. Stop the cluster
 `./stop.sh`
